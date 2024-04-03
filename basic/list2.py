@@ -16,6 +16,11 @@ from typing import Any, List, Optional
 
 
 def remove_adjacent(nums: List[int]) -> List[int]:
+    """
+    Iterate through the list.
+    Store the last processed number, and if the new number is different, store
+    it in the list to return.
+    """
     last: Optional[int] = None
     new: List[int] = []
     for num in nums:
@@ -30,9 +35,32 @@ def remove_adjacent(nums: List[int]) -> List[int]:
 # list of all the elements in sorted order. You may modify the passed in lists.
 # Ideally, the solution should work in "linear" time, making a single
 # pass of both lists.
-def linear_merge(list1, list2):
-    # +++your code here+++
-    return
+def linear_merge(list1: List[Any], list2: List[Any]) -> List[Any]:
+    """
+    Iterate through the lists and pop the smallest head from the list and
+    add that to the final list. O(1)
+
+    If either list is empty, then extend the rest of the remaining list to the
+    final list and return. O(n)
+    """
+
+    final_list: List[Any] = []
+
+    while True:
+        if not list1:
+            final_list.extend(list2)
+            break
+        
+        if not list2:
+            final_list.extend(list1)
+            break
+
+        if list1[0] <= list2[0]:
+            final_list.append(list1.pop(0))
+        else:
+            final_list.append(list2.pop(0))
+
+    return final_list
 
 # Note: the solution above is kind of cute, but unforunately list.pop(0)
 # is not constant time with the standard python list implementation, so
