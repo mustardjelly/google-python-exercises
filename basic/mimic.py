@@ -89,12 +89,11 @@ def print_mimic(mimic_dict: Dict[str,List[str]], word: str) -> None:
 
 # Provided main(), calls mimic_dict() and mimic()
 def main() -> None:
-  # if len(sys.argv) != 2:
-  #   print('usage: ./mimic.py file-to-read')
-  #   sys.exit(1)
+  if len(sys.argv) != 2:
+    print('usage: ./mimic.py file-to-read')
+    sys.exit(1)
 
-  # dict: Dict[str, List[str]] = mimic_dict(sys.argv[1])
-  dict: Dict[str, List[str]] = mimic_dict(os.path.join("basic","mimic.py"))
+  dict: Dict[str, List[str]] = mimic_dict(sys.argv[1])
   print_mimic(dict, '')
 
 
