@@ -43,27 +43,58 @@ columns, so the output looks better.
 
 import random
 import sys
+import os
+from typing import Dict, List
 
 
-def mimic_dict(filename):
+def mimic_dict(filename: str) -> Dict[str,List[str]]:
   """Returns mimic dict mapping each word to list of words which follow it."""
-  # +++your code here+++
-  return
+  if not os.path.exists(filename):
+    raise FileExistsError(f"File not found: {filename}")
+  
+  with open(filename, encoding='utf-8') as f:
+    contents: str = f.read()
+    contents = contents.replace("\n", " ")
+    contents = contents.replace("\\'", "'")
+
+  split: list[str] = contents.split()
+  max_idx: int = len(split) - 1
+  m_dict: Dict[str, List[str]] = {"": [split[0]]}
+  for idx, value in enumerate(split):
+    if idx == max_idx:
+      break
+
+    if value in m_dict:
+      m_dict[value].append(split[idx+1].strip())
+    else:
+      m_dict[value] = [split[idx+1]]
+
+  return m_dict
 
 
-def print_mimic(mimic_dict, word):
+def print_mimic(mimic_dict: Dict[str,List[str]], word: str) -> None:
   """Given mimic dict and start word, prints 200 random words."""
-  # +++your code here+++
-  return
+  max_words: int = 200
+  story: List[str] = []
+  for i in range(200):
+    if i == 0:
+      current_word: str = random.choice(mimic_dict[word])
+    else:
+      current_word = next_word
+    story.append(current_word)
+    next_word: str = random.choice(mimic_dict[current_word])
+
+  print(" ".join(story))
 
 
 # Provided main(), calls mimic_dict() and mimic()
-def main():
-  if len(sys.argv) != 2:
-    print('usage: ./mimic.py file-to-read')
-    sys.exit(1)
+def main() -> None:
+  # if len(sys.argv) != 2:
+  #   print('usage: ./mimic.py file-to-read')
+  #   sys.exit(1)
 
-  dict = mimic_dict(sys.argv[1])
+  # dict: Dict[str, List[str]] = mimic_dict(sys.argv[1])
+  dict: Dict[str, List[str]] = mimic_dict(os.path.join("basic","mimic.py"))
   print_mimic(dict, '')
 
 
