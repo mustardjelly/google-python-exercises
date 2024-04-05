@@ -19,9 +19,6 @@ from typing import Tuple
 
 
 def verbing(s: str) -> str:
-  # +++your code here+++
-
-  suffix = ""
   if len(s) < 3:
     suffix = ""
   elif s[-3:] != "ing":
@@ -43,7 +40,6 @@ def verbing(s: str) -> str:
 # So 'This dinner is not that bad!' yields:
 # This dinner is good!
 def not_bad(s: str) -> str:
-  # +++your code here+++
   not_idx: int = s.find("not")
   bad_idx: int = s.find("bad")
 
@@ -60,7 +56,6 @@ def not_bad(s: str) -> str:
 # Given 2 strings, a and b, return a string of the form
 #  a-front + b-front + a-back + b-back
 def front_back(a: str, b: str) -> str:
-  # +++your code here+++
   def divider(s: str) -> Tuple[str, str]:
     str_len: int = len(s)
     if str_len % 2 == 0:

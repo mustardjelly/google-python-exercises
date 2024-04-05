@@ -37,9 +37,76 @@ print_words() and print_top().
 
 """
 
+import os
 import sys
+from typing import Dict, List
 
-# +++your code here+++
+
+def read_file(filename: str) -> List[str]:
+  """
+  Reads a file and splits it into a list of words contained in that file.
+  
+  Args:
+    filename(str): the relative or absolute path to the file to read.
+
+  Raises:
+    FileExistsError: If the file cannot be found.
+  
+  Returns:
+    words(List[str]): A list of words contained in the file.
+  """
+  if not os.path.exists(filename):
+    raise FileExistsError(f"Could not read {filename}")
+
+  with open(filename, encoding='utf-8') as f:
+    contents: str = f.read()
+    contents = contents.replace("\n", " ")
+  return contents.split()
+
+def make_count_dict(words: List[str]) -> Dict[str, int]:
+  """
+  Creates a word count dictionary from a list of words.
+
+  Args:
+    words(List[str]): A list of strings
+
+  Returns:
+    Dict[str, int]: A dictionary where the key is the word and the value is the
+      number of times it appears in the words list.
+  """
+  count_dict: Dict[str, int] = {}
+  for word in words:
+    if word not in count_dict:
+      count_dict[word] = 1
+    else:
+      count_dict[word] += 1
+  return count_dict
+
+def print_words(filename: str) -> None:
+  """
+  Prints a list of words contained in a filename and their count.
+  The list will be printed in alphabetical order.
+
+  Args:
+    filename(str): The name of the file to read words from.
+  """
+  words: List[str] = read_file(filename)
+  count_dict: Dict[str, int] = make_count_dict(words)
+  keys: List[str] = [word for word in count_dict.keys()]
+  keys.sort()
+
+  for key in keys:
+    print(key, count_dict[key])
+
+def print_top(filename: str) -> None:
+  words: List[str] = read_file(filename)
+  count_dict: Dict[str, int] = make_count_dict(words)
+  top_freq: List[str] = list(sorted(count_dict, key=count_dict.__getitem__, reverse=True))
+
+  for i in range(min(20, len(top_freq))):
+    line: str = f"{i + 1}) Word: '{top_freq[i]}' Count: {count_dict[top_freq[i]]}"
+    print(line)
+
 # Define print_words(filename) and print_top(filename) functions.
 # You could write a helper utility function that reads a file
 # and builds and returns a word/count dict for it.
@@ -49,13 +116,17 @@ import sys
 
 # This basic command line argument parsing code is provided and
 # calls the print_words() and print_top() functions which you must define.
-def main():
+def main() -> None:
   if len(sys.argv) != 3:
     print('usage: ./wordcount.py {--count | --topcount} file')
     sys.exit(1)
 
-  option = sys.argv[1]
-  filename = sys.argv[2]
+  option: str = sys.argv[1]
+  filename: str = sys.argv[2]
+
+  # option = "--topcount"
+  # filename = "/home/mustard/repos/google-python-exercises/copyspecial/xyz__hello__.txt"
+  # filename = "/home/mustard/repos/google-python-exercises/basic/alice.txt"
   if option == '--count':
     print_words(filename)
   elif option == '--topcount':
