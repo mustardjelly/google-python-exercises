@@ -23,9 +23,10 @@
 # instead of the actual count.
 # So donuts(5) returns 'Number of donuts: 5'
 # and donuts(23) returns 'Number of donuts: many'
-def donuts(count):
+def donuts(count: int) -> str:
   # +++your code here+++
-  return
+  donuts: str = str(count) if count < 10 else 'many'
+  return f'Number of donuts: {donuts}'
 
 
 # B. both_ends
@@ -33,9 +34,10 @@ def donuts(count):
 # and the last 2 chars of the original string,
 # so 'spring' yields 'spng'. However, if the string length
 # is less than 2, return instead the empty string.
-def both_ends(s):
+def both_ends(my_str: str) -> str:
   # +++your code here+++
-  return
+  out_str: str = "" if len(my_str) < 2 else my_str[:2] + my_str[-2:]
+  return out_str
 
 
 # C. fix_start
@@ -47,9 +49,10 @@ def both_ends(s):
 # Assume that the string is length 1 or more.
 # Hint: s.replace(stra, strb) returns a version of string s
 # where all instances of stra have been replaced by strb.
-def fix_start(s):
-  # +++your code here+++
-  return
+def fix_start(s: str) -> str:
+  first_char: str = s[0]
+  out_str: str = first_char + s.replace(first_char, "*")[1:]
+  return out_str
 
 
 # D. MixUp
@@ -59,9 +62,10 @@ def fix_start(s):
 #   'mix', pod' -> 'pox mid'
 #   'dog', 'dinner' -> 'dig donner'
 # Assume a and b are length 2 or more.
-def mix_up(a, b):
-  # +++your code here+++
-  return
+def mix_up(a: str, b: str) -> str:
+  first_word: str = b[:2] + a[2:]
+  second_word: str = a[:2] + b[2:]
+  return f"{first_word} {second_word}" 
 
 
 # Provided simple test() function used in main() to print

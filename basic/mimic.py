@@ -55,7 +55,6 @@ def mimic_dict(filename: str) -> Dict[str,List[str]]:
   with open(filename, encoding='utf-8') as f:
     contents: str = f.read()
     contents = contents.replace("\n", " ")
-    contents = contents.replace("\\'", "'")
 
   split: list[str] = contents.split()
   max_idx: int = len(split) - 1
@@ -74,8 +73,8 @@ def mimic_dict(filename: str) -> Dict[str,List[str]]:
 
 def print_mimic(mimic_dict: Dict[str,List[str]], word: str) -> None:
   """Given mimic dict and start word, prints 200 random words."""
-  max_words: int = 200
   story: List[str] = []
+  next_word: str = ""
   for i in range(200):
     if i == 0:
       current_word: str = random.choice(mimic_dict[word])
