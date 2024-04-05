@@ -15,9 +15,23 @@
 # add 'ly' instead.
 # If the string length is less than 3, leave it unchanged.
 # Return the resulting string.
-def verbing(s):
+from typing import Tuple
+
+
+def verbing(s: str) -> str:
   # +++your code here+++
-  return
+
+  suffix = ""
+  if len(s) < 3:
+    suffix = ""
+  elif s[-3:] != "ing":
+    suffix = "ing"
+  else:
+    suffix = "ly"
+  
+  out_str: str = s + suffix
+
+  return out_str
 
 
 # E. not_bad
@@ -28,9 +42,14 @@ def verbing(s):
 # Return the resulting string.
 # So 'This dinner is not that bad!' yields:
 # This dinner is good!
-def not_bad(s):
+def not_bad(s: str) -> str:
   # +++your code here+++
-  return
+  not_idx: int = s.find("not")
+  bad_idx: int = s.find("bad")
+
+  if not_idx < bad_idx:
+    s = s[:not_idx] + "good" + s[bad_idx + 3:]
+  return s
 
 
 # F. front_back
@@ -40,9 +59,22 @@ def not_bad(s):
 # e.g. 'abcde', the front half is 'abc', the back half 'de'.
 # Given 2 strings, a and b, return a string of the form
 #  a-front + b-front + a-back + b-back
-def front_back(a, b):
+def front_back(a: str, b: str) -> str:
   # +++your code here+++
-  return
+  def divider(s: str) -> Tuple[str, str]:
+    str_len: int = len(s)
+    if str_len % 2 == 0:
+      mid: int = str_len // 2
+    else:
+      mid: int = (str_len // 2) + 1
+
+    front: str = s[:mid]
+    back: str = s[mid:]
+    return front, back
+  
+  a_front, a_back = divider(a)
+  b_front, b_back = divider(b)
+  return a_front + b_front + a_back + b_back
 
 
 # Simple provided test() function used in main() to print
@@ -69,6 +101,7 @@ def main():
   test(not_bad('This dinner is not that bad!'), 'This dinner is good!')
   test(not_bad('This tea is not hot'), 'This tea is not hot')
   test(not_bad("It's bad yet not"), "It's bad yet not")
+  test(not_bad("This dinner is not that bad"), "This dinner is good")
 
   print()
   print('front_back')
