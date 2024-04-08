@@ -6,9 +6,10 @@
 # Google's Python Class
 # http://code.google.com/edu/languages/google-python-class/
 
+import os
 import sys
 import re
-from typing import List
+from typing import List, Tuple, cast
 
 """Baby Names exercise
 
@@ -37,73 +38,136 @@ Suggested milestones for incremental development:
 
 
 def read_file(filename: str) -> List[str]:
+    """
+    Open file, return contents as a list of lines.
+
+    Args:
+        filename (str): The name of the file to open.
+    """
     with open(filename, encoding="utf-8") as f:
-        contents = f.readlines()
+        contents: List[str] = f.readlines()
 
     return contents
 
 
 def read_year(contents: List[str]) -> str:
+    """
+    Extract the year from the contents.
+
+    Args:
+        contents (List[str]): The list of lines from the file.
+
+    Returns:
+        The year when found.
+    """
+    year = ""
     for line in contents:
-        year_line = re.match(r"<h3 align=\"center\">Popularity in (\d{4})</h3>", line)
+        year_line: re.Match[str] | None = re.match(r"<h3 align=\"center\">Popularity in (\d{4})</h3>", line)
         if year_line is not None:
-            year = year_line.group(1)
+            year: str = cast(str, year_line.group(1))
             break
     return year
 
 
-def read_names(contents: List[str]) -> List[str]:
-    print(print("{0:<4} {1:<20} {2:<20}".format("Rank", "Male", "Female")))
+def read_names(contents: List[str]) -> List[Tuple[str, str, str]]:
+    """
+    Reads the list data from the website and extracts the rank and names.
+    
+    Args:
+        contents (List[str]): The website as a list of strings.
+
+    Returns:
+        List[Tuple[str, str, str]]: A list of rank, male, female
+    """
+    names: List[Tuple[str, str, str]] = []
     for line in contents:
-        name_line = re.match(
-            r"<tr align=\"right\"><td>({\d+})</td><td>(\w+)</td><td>(\w+)</td>", line
+        name_line: re.Match[str] | None = re.match(
+            r"<tr align=\"right\"><td>(\d+)</td><td>(\w+)</td><td>(\w+).*", line
         )
         if name_line is None:
             continue
 
-        rank = name_line.group(1)
-        male = name_line.group(2)
-        female = name_line.group(3)
+        rank: str = cast(str, name_line.group(1))
+        male: str = cast(str, name_line.group(2))
+        female: str = cast(str, name_line.group(3))
+        names.append((rank, male, female))
 
-        print("{0:<5} {1:<20} {2:<20}".format(rank, male, female))
+    return names
 
 
-def extract_names(filename: str):
+def extract_names(filename: str, summary: bool=False) -> List[str]:
     """
     Given a file name for baby.html, returns a list starting with the year string
     followed by the name-rank strings in alphabetical order.
     ['2006', 'Aaliyah 91', Aaron 57', 'Abagail 895', ' ...]
     """
-    contents = read_file(filename)
-    year = read_year(contents)
-    read_names(contents)
-    # names =
-    # +++your code here+++
-    return
+    contents: List[str] = read_file(filename)
+    year: str = read_year(contents)
+    data: List[Tuple[str, str, str]] = read_names(contents)
+
+    if not summary:
+        print("{0:<4} {1:<20} {2:<20}".format("Rank", "Male", "Female"))
+        for row in data:
+            print("{0:<5} {1:<20} {2:<20}".format(row[0], row[1], row[2]))
+
+    out: List[str] = []
+
+    males: List[str] = [f"{row[1]} {row[0]}" for row in data]
+    females: List[str] = [f"{row[2]} {row[0]}" for row in data]
+
+    out.extend(males)
+    out.extend(females)
+    out.sort()
+    out.insert(0, year)
+    return out
 
 
-def main():
+def write_results(names: List[str]) -> None:
+    """
+    Write names list to file.
+
+    File called summary_XXXX.txt
+    
+    Args:
+        names (List[str]): The list of names sorted alphabetcally with their 
+            ranking appended to the end.
+    """
+    year: str = names.pop(0)
+    write_path: str = os.path.join(os.path.dirname(__file__), f"summary_{year}.txt")
+    print(f"Writing {year} to: {write_path}")
+    with open(f"{write_path}", "w", encoding="utf-8") as f:
+        for line in names:
+            f.write(f"{line}\n")
+
+
+def main() -> None:
     # This command-line parsing code is provided.
     # Make a list of command line arguments, omitting the [0] element
     # which is the script itself.
-    args = sys.argv[1:]
-    args.append("/home/powell/google-python-exercises/babynames/baby1990.html")
+    args: List[str] = sys.argv[1:]
+    args.append("babynames/baby1990.html")
+    args.append("babynames/baby1992.html")
+    args.append("babynames/baby1996.html")
+    override = True
 
     if not args:
         print("usage: [--summaryfile] file [file ...]")
         sys.exit(1)
 
     # Notice the summary flag and remove it from args if it is present.
-    summary = False
-    if args[0] == "--summaryfile":
+    summary = False or override
+    if "--summaryfile" in args:
         summary = True
-        del args[0]
+        del args[args.index("--summaryfile")]
 
-    # +++your code here+++
     # For each filename, get the names, then either print the text output
     # or write it to a summary file
-    filename = args[0]
-    extract_names(filename)
+    for filename in args:
+        names: List[str] = extract_names(filename, summary)
+
+        if summary:
+            write_results(names)
+
 
 
 if __name__ == "__main__":
